@@ -41,7 +41,6 @@ async def slave(message: types.Message):
 
 async def on_startup(dp):
     asyncio.create_task(check_time())
-    asyncio.run(create_tables())
 
 def main():
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)

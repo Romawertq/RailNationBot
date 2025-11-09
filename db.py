@@ -12,6 +12,7 @@ async def fetch_messages(conn):
     return await conn.fetch("SELECT server_id, slave, money, time, sent FROM slave WHERE time = $1", datetime.now().strftime('%H:%M'))
 
 async def my_function():
+    await create_tables()
     conn = await asyncpg.connect(
             host=HOST,
             user=USER,
@@ -36,6 +37,7 @@ async def my_function():
             return  w, t, g
 
 async def setting1(message):
+    await create_tables()
     data = message.text.split()[1:]
     conn = await asyncpg.connect(
         host=HOST,
@@ -52,6 +54,7 @@ async def setting1(message):
     await conn.close()
 
 async def slave1(message):
+    await create_tables()
     data = message.text.split()[1:]
     conn = await asyncpg.connect(
         host=HOST,
