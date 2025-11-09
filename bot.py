@@ -6,7 +6,8 @@ from datetime import datetime
 from db import (
     slave1,
     my_function,
-    setting1
+    setting1,
+    create_tables
 )
 
 bot = Bot(token="7457602333:AAGK16EQolfpV9IBlXgx923XWOcsOZ3VZ9U")
@@ -43,6 +44,7 @@ async def on_startup(dp):
 def main():
     # Запускаем бота
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
+    create_tables()
 
 if __name__ == '__main__':
     main()

@@ -3,13 +3,13 @@ from datetime import datetime
 
 
 HOST = "127.0.0.1"
-PASSWORD = "postgresEQW1"
+PASSWORD = "postgres"
 PORT = "5432"
-USER = "tyr"
+USER = "postgresql"
 DB_NAME = "postgres"
 
 async def fetch_messages(conn):
-    return await conn.fetch("SELECT server, slave, money, time, sent FROM slave WHERE time = $1", datetime.now().strftime('%H:%M'))
+    return await conn.fetch("SELECT server_id, slave, money, time, sent FROM slave WHERE time = $1", datetime.now().strftime('%H:%M'))
 
 async def my_function():
     conn = await asyncpg.connect(
@@ -121,3 +121,57 @@ async def slave1(message):
         return re, fer, w
     else:
         print(f"Не правильно {der}")
+
+
+async def create_tables():
+    conn = await asyncpg.connect(
+        host=HOST,
+        user=USER,
+        password=PASSWORD,
+        database=DB_NAME,
+        port=PORT
+    )
+    cur = conn.cursor
+
+    cur.execute("""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = 'setting'
+        );
+    """)
+    exists = cur.fetchone()[0]
+
+    if not exists:
+        create_table_query = """
+            CREATE TABLE setting (
+                id_pros varchar(50),
+                id_vivod varchar(50),
+                server_id varchar(50)
+            );
+        """
+        cur.execute(create_table_query)
+        conn.commit()
+
+    cur.execute("""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = 'slave'
+        );
+    """)
+    exists = cur.fetchone()[0]
+
+    if not exists:
+        create_table_query = """
+            CREATE TABLE setting (
+                server_id varchar(50),
+                slave varchar(50),
+                money varchar(50),
+                time varchar(50),
+                sent varchar(50)
+            );
+        """
+        cur.execute(create_table_query)
+        conn.commit()
+    conn.close()
