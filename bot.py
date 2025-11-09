@@ -10,7 +10,7 @@ from db import (
     create_tables
 )
 
-bot = Bot(token="7457602333:AAGK16EQolfpV9IBlXgx923XWOcsOZ3VZ9U")
+bot = Bot(token="7457602333:AAFeT6Zm5lAg43no1xvd5zAlEFXcYuWIkU")
 dp = Dispatcher(bot, storage=MemoryStorage())
 tracemalloc.start()
 
@@ -42,9 +42,8 @@ async def on_startup(dp):
     asyncio.create_task(check_time())
 
 def main():
-    # Запускаем бота
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
-    create_tables()
 
 if __name__ == '__main__':
+    asyncio.run(create_tables())
     main()

@@ -3,9 +3,9 @@ from datetime import datetime
 
 
 HOST = "127.0.0.1"
-PASSWORD = "postgres"
+PASSWORD = "postgresEQW1"
 PORT = "5432"
-USER = "postgresql"
+USER = "tyr"
 DB_NAME = "postgres"
 
 async def fetch_messages(conn):
@@ -131,16 +131,14 @@ async def create_tables():
         database=DB_NAME,
         port=PORT
     )
-    cur = conn.cursor
 
-    cur.execute("""
+    exists = await conn.fetchval("""
         SELECT EXISTS (
             SELECT FROM information_schema.tables 
             WHERE table_schema = 'public' 
             AND table_name = 'setting'
         );
     """)
-    exists = cur.fetchone()[0]
 
     if not exists:
         create_table_query = """
@@ -150,21 +148,19 @@ async def create_tables():
                 server_id varchar(50)
             );
         """
-        cur.execute(create_table_query)
-        conn.commit()
+        await conn.execute(create_table_query)
 
-    cur.execute("""
+    exists = await conn.fetchval("""
         SELECT EXISTS (
             SELECT FROM information_schema.tables 
             WHERE table_schema = 'public' 
             AND table_name = 'slave'
         );
     """)
-    exists = cur.fetchone()[0]
 
     if not exists:
         create_table_query = """
-            CREATE TABLE setting (
+            CREATE TABLE slave (  -- ← тут была ошибка: вы создавали таблицу "setting" вместо "slave"
                 server_id varchar(50),
                 slave varchar(50),
                 money varchar(50),
@@ -172,6 +168,7 @@ async def create_tables():
                 sent varchar(50)
             );
         """
-        cur.execute(create_table_query)
-        conn.commit()
-    conn.close()
+        await conn.execute(create_table_query)
+
+    await conn.close()
+    print("✅ Таблицы проверены и созданы при необходимости.")
