@@ -6,8 +6,7 @@ from datetime import datetime
 from db import (
     slave1,
     my_function,
-    setting1,
-    create_tables
+    setting1
 )
 
 bot = Bot(token="7457602333:AAFeT6Zm5lAg43no1xvd5zAlEFXcYuWIkU")
@@ -20,13 +19,18 @@ async def check_time():
     while True:
         now = datetime.now()
         if now.minute in minutes_to_run:
-            g = my_function()
+            g = await my_function()
             if g:
                 w, t, r = g
                 await bot.send_message(chat_id=int(w), text=t, reply_to_message_id=int(r))
                 print(f'Запуск функции, время: {now}')
                 await asyncio.sleep(60)
+        else:
+            await asyncio.sleep(60)
 
+@dp.message_handler(commands=['start'])
+async def start(message: types.Message):
+    await message.answer("Да ну ёмаё")
 
 @dp.message_handler(commands=['setting'])
 async def setting(message: types.Message):
