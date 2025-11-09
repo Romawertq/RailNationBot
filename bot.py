@@ -21,10 +21,11 @@ async def check_time():
         now = datetime.now()
         if now.minute in minutes_to_run:
             g = my_function()
-            w, t, r = g
-            await bot.send_message(chat_id=int(w), text=t, reply_to_message_id=int(r))
-            print(f'Запуск функции, время: {now}')
-            await asyncio.sleep(60)
+            if g:
+                w, t, r = g
+                await bot.send_message(chat_id=int(w), text=t, reply_to_message_id=int(r))
+                print(f'Запуск функции, время: {now}')
+                await asyncio.sleep(60)
 
 
 @dp.message_handler(commands=['setting'])
@@ -40,10 +41,10 @@ async def slave(message: types.Message):
 
 async def on_startup(dp):
     asyncio.create_task(check_time())
+    asyncio.run(create_tables())
 
 def main():
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
 
 if __name__ == '__main__':
-    asyncio.run(create_tables())
     main()
